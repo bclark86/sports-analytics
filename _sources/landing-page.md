@@ -2,6 +2,8 @@
 
 ![img](./img/landing-page-motionary.png)
 
+**DISCLAIMER:** WORK IN PROGRESS
+
 This book is organized by topic, so feel free to jump around. Topics include:
 
 + NHL
