@@ -1,0 +1,12 @@
+- file: landing-page
+
+- part: Case Studies in the NHL
+  chapters:
+  - file: 01-Competitive-Balance.ipynb
+
+- part: Case Studies in the NFL
+
+- part: About Me
+  chapters:
+  - url: https://www.linkedin.com/in/bryan-clark-b38470b/
+    title: LinkedIn

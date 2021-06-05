@@ -1,0 +1,18 @@
+# in _config.yml
+title: "Sports Analytics w/ Python"
+author: Bryan Clark
+
+execute:
+  execute_notebooks: "off"
+
+repository:
+  url: https://github.com/bclark86/sports-analytics
+html:
+  use_issues_button: true
+  google_analytics_id: XXX
+
+exclude_patterns: [_build, .DS_Store, "**.ipynb_checkpoints"]
+
+sphinx:
+  config:
+    language: en
