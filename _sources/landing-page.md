@@ -8,6 +8,8 @@ This book is organized by topic, so feel free to jump around. Topics include:
 + NFL
 + Business of Sports
 
+Various helper functions are used to source data for analysis. Those can be found in the [Github repo](https://github.com/bclark86/sports-analytics/tree/master/sports-analytics-with-python/helpers) for this project. 
+
 ## Acknowledgements
 
 The inspiration for this work comes from a Sports Economics class I took during my MBA @ NYU Stern. The course is taught by one of the best professors I had, [Simon Bowmaker](https://www.stern.nyu.edu/faculty/bio/simon-bowmaker).
