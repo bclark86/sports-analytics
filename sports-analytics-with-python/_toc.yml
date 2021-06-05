@@ -1,6 +1,6 @@
 - file: landing-page
 
-- part: Case Studies in the NHL
+- part: NHL Case Studies
   chapters:
   - file: 01-Competitive-Balance.ipynb
 
