@@ -9,7 +9,7 @@ repository:
   url: https://github.com/bclark86/sports-analytics
 html:
   use_issues_button: true
-  google_analytics_id: XXX
+  google_analytics_id: UA-198853679-1
 
 exclude_patterns: [_build, .DS_Store, "**.ipynb_checkpoints"]
 
