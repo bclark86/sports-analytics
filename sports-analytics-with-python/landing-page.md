@@ -1,6 +1,6 @@
 # Sports Analytics w/ Python
 
-![img](./sports-analytics-with-python/img/landing-page-motionary.png)
+![img](./img/landing-page-motionary.png)
 
 This book is organized by topic, so feel free to jump around. Topics include:
 
