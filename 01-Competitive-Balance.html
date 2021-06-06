@@ -205,6 +205,39 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#goal">
+   Goal
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#questions-to-answer">
+   Questions to Answer
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#nhl-standings-data">
+   NHL Standings Data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#calculating-competitive-balance">
+   Calculating Competitive Balance
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-season-groupings">
+   Define Season Groupings
+  </a>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -215,43 +248,262 @@
                 
   <div class="section" id="competitive-balance-in-the-nhl">
 <h1>Competitive Balance in the NHL<a class="headerlink" href="#competitive-balance-in-the-nhl" title="Permalink to this headline">¶</a></h1>
+<p>WORK-IN-PROGRESS</p>
+<div class="section" id="goal">
+<h2>Goal<a class="headerlink" href="#goal" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Analyze how rule changes and/or lockouts have impacted competitive balance in the NHL</p></li>
+</ul>
+</div>
+<div class="section" id="questions-to-answer">
+<h2>Questions to Answer<a class="headerlink" href="#questions-to-answer" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>What is competitive balance? How can it be measured?</p></li>
+<li><p>What are key time periods in the NHL? Lockouts and/or major rule changes</p></li>
+<li><p>How has competitive balanced changed across the major time periods? Is there any statistical significance to the findings?</p></li>
+</ul>
+</div>
+<div class="section" id="nhl-standings-data">
+<h2>NHL Standings Data<a class="headerlink" href="#nhl-standings-data" title="Permalink to this headline">¶</a></h2>
+<p>We are querying the history of the NHL standings using a helper function that connects to the NHL stats API. There isn’t a ton of documentation, but this <a class="reference external" href="https://github.com/dword4/nhlapi">repo</a> is a great place to start for understanding what is available.</p>
+<p>First we use a function to query the games played (GP) and point percentage for each team in a single season , and then we iterate through each season in history using that function to collect all historical results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">helpers.nhl.datasets</span> <span class="kn">import</span> <span class="n">fetch_season_history</span>
+
+<span class="k">def</span> <span class="nf">fetch_season_summary</span><span class="p">(</span><span class="n">season</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Query team standings for a given season.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># dictionary holder for the season</span>
+    <span class="n">season_standings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="c1"># api request</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;https://statsapi.web.nhl.com/api/v1/standings/byLeague&#39;</span>
+    <span class="n">season_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;?season=</span><span class="si">{</span><span class="n">season</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">season</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base_url</span> <span class="o">+</span> <span class="n">season_id</span><span class="p">)</span>
+    <span class="c1"># throws an error for the missing lockout season</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">season_records</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;records&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># extract results</span>
+        <span class="n">season_standings</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">season_records</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span>
+        <span class="n">season_standings</span><span class="p">[</span><span class="s1">&#39;num_teams&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">season_records</span><span class="p">[</span><span class="s1">&#39;teamRecords&#39;</span><span class="p">])</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="s1">&#39;team&#39;</span><span class="p">:</span> <span class="n">team</span><span class="p">[</span><span class="s1">&#39;team&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;gp&#39;</span><span class="p">:</span> <span class="n">team</span><span class="p">[</span><span class="s1">&#39;gamesPlayed&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;points&#39;</span><span class="p">:</span> <span class="n">team</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;points_pct&#39;</span><span class="p">:</span> <span class="n">team</span><span class="p">[</span><span class="s1">&#39;pointsPercentage&#39;</span><span class="p">]</span>
+        <span class="p">}</span> <span class="k">for</span> <span class="n">team</span> <span class="ow">in</span> <span class="n">season_records</span><span class="p">[</span><span class="s1">&#39;teamRecords&#39;</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">season_standings</span><span class="p">[</span><span class="s1">&#39;standings_df&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">season_standings</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">fetch_season_history</span><span class="p">(</span><span class="n">start_season</span><span class="o">=</span><span class="s1">&#39;19171918&#39;</span><span class="p">,</span> <span class="n">end_season</span><span class="o">=</span><span class="s1">&#39;20202021&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Query team standings for every season between start_season and end_season</span>
+<span class="sd">    (inclusive)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># convert to ints for incrementing after each loop</span>
+    <span class="n">start_season_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_season</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">start_season_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_season</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:])</span>
+    <span class="n">end_season_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end_season</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">current_start</span> <span class="o">=</span> <span class="n">start_season_start</span>
+    <span class="n">current_end</span> <span class="o">=</span> <span class="n">start_season_end</span>
+    <span class="n">all_seasons</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_season_start</span><span class="p">,</span> <span class="n">end_season_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="n">season</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_start</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_end</span><span class="p">)</span>
+        <span class="n">season_dict</span> <span class="o">=</span> <span class="n">fetch_season_summary</span><span class="p">(</span><span class="n">season</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">season_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">all_seasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_dict</span><span class="p">)</span>
+        <span class="n">current_start</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">current_end</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">all_seasons</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seasons</span> <span class="o">=</span> <span class="n">fetch_season_history</span><span class="p">(</span><span class="s1">&#39;19171918&#39;</span><span class="p">,</span> <span class="s1">&#39;20202021&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_seasons</span> <span class="o">=</span> <span class="n">fetch_season_history</span><span class="p">(</span><span class="s1">&#39;19171918&#39;</span><span class="p">,</span> <span class="s1">&#39;20202021&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 104/104 [00:09&lt;00:00, 10.99it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 104/104 [00:09&lt;00:00, 11.17it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<p>The innagural NHL season was in 1917-1918 with four teams. We can see the results below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># list of dict for each season</span>
+<span class="n">all_seasons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;season&#39;: &#39;19171918&#39;,
+ &#39;num_teams&#39;: 4,
+ &#39;standings_df&#39;:                      team  gp  points  points_pct
+ 0      Montréal Canadiens  22      26    0.590909
+ 1          Toronto Arenas  22      26    0.590909
+ 2  Ottawa Senators (1917)  22      18    0.409091
+ 3      Montreal Wanderers   6       2    0.166667}
+</pre></div>
+</div>
+</div>
+</div>
+<p>Despite our progress bar showing 104 seasons, we only have 103 for analysis as the 2004-2005 season was lost due to a lockout.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Total seasons: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_seasons</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total seasons: 103
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="calculating-competitive-balance">
+<h2>Calculating Competitive Balance<a class="headerlink" href="#calculating-competitive-balance" title="Permalink to this headline">¶</a></h2>
+<p>There are two metrics we will use to analyze competitive balance:</p>
+<ol class="simple">
+<li><p>Within-season variation (regular season)</p></li>
+<li><p>HHI (championships)</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_within_season_var</span><span class="p">(</span><span class="n">standings_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate competitive balance for the season. This assumes that the ideal</span>
+<span class="sd">    point percentage is the average point percentage for the season, which may</span>
+<span class="sd">    not be 0.5.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">actual_std</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># assumes perfect balance is every team at mean</span>
+    <span class="n">point_pct</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">standings_df</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">gp</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">ideal_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">point_pct</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">point_pct</span><span class="p">)))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gp</span><span class="p">)</span>
+    <span class="n">max_points</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">min_points</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;gp&#39;</span><span class="p">:</span> <span class="n">gp</span><span class="p">,</span>
+        <span class="s1">&#39;point_pct&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">point_pct</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+        <span class="s1">&#39;actual_std&#39;</span><span class="p">:</span> <span class="n">actual_std</span><span class="p">,</span>
+        <span class="s1">&#39;ideal_std&#39;</span><span class="p">:</span> <span class="n">ideal_std</span><span class="p">,</span>
+        <span class="s1">&#39;ratio&#39;</span><span class="p">:</span> <span class="n">actual_std</span> <span class="o">/</span> <span class="n">ideal_std</span>
+    <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;season&#39;</span><span class="p">:</span> <span class="n">season</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;num_teams&#39;</span><span class="p">:</span> <span class="n">season</span><span class="p">[</span><span class="s1">&#39;num_teams&#39;</span><span class="p">],</span>
-            <span class="o">**</span><span class="n">season</span><span class="p">[</span><span class="s1">&#39;competitive_balance&#39;</span><span class="p">]</span>
-        <span class="p">}</span> 
-    <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">seasons</span>
-    <span class="p">]</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;season&#39;</span><span class="p">:</span> <span class="n">season</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">calculate_within_season_var</span><span class="p">(</span><span class="n">season</span><span class="p">[</span><span class="s1">&#39;standings_df&#39;</span><span class="p">])</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">all_seasons</span>
+<span class="p">])</span>
 </pre></div>
 </div>
 </div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>gp</th>
+      <th>point_pct</th>
+      <th>actual_std</th>
+      <th>ideal_std</th>
+      <th>ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>19171918</td>
+      <td>18.0</td>
+      <td>0.5</td>
+      <td>0.174078</td>
+      <td>0.117851</td>
+      <td>1.477098</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>19181919</td>
+      <td>18.0</td>
+      <td>0.5</td>
+      <td>0.163551</td>
+      <td>0.117851</td>
+      <td>1.387777</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>19191920</td>
+      <td>24.0</td>
+      <td>0.5</td>
+      <td>0.222439</td>
+      <td>0.102062</td>
+      <td>2.179449</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>19201921</td>
+      <td>24.0</td>
+      <td>0.5</td>
+      <td>0.147314</td>
+      <td>0.102062</td>
+      <td>1.443376</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>19211922</td>
+      <td>24.0</td>
+      <td>0.5</td>
+      <td>0.125865</td>
+      <td>0.102062</td>
+      <td>1.233221</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -261,8 +513,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/01-Competitive-Balance_4_0.png" src="_images/01-Competitive-Balance_4_0.png" />
+<img alt="_images/01-Competitive-Balance_12_0.png" src="_images/01-Competitive-Balance_12_0.png" />
 </div>
+</div>
+</div>
+<div class="section" id="define-season-groupings">
+<h2>Define Season Groupings<a class="headerlink" href="#define-season-groupings" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
