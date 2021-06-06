@@ -8,9 +8,7 @@ This book is organized by topic, so feel free to jump around. Topics include:
 
 + NHL
 + NFL
-+ Business of Sports
-
-Various helper functions are used to source data for analysis. Those can be found in the [Github repo](https://github.com/bclark86/sports-analytics/tree/master/sports-analytics-with-python/helpers) for this project. 
++ Business Analytics
 
 ## Acknowledgements
 
