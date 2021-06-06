@@ -4,7 +4,7 @@
 
 Case studies in sports analytics using Python. There is no rhyme or reason to the work other than trying to answer interesting questions in using publicly available sports data. 
 
-[Check out the book here!](https://bclark86.github.io/sports-analytics-with-python/landing-page.html)
+[Check out the work here!](https://bclark86.github.io/sports-analytics/)
 
 ## Acknowledgements
 
