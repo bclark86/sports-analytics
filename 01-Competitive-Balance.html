@@ -235,6 +235,11 @@
    Define Season Groupings
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plot-ratio-over-time">
+   Plot Ratio Over Time
+  </a>
+ </li>
 </ul>
 
             </nav>
@@ -400,7 +405,7 @@
     <span class="n">min_points</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;gp&#39;</span><span class="p">:</span> <span class="n">gp</span><span class="p">,</span>
-        <span class="s1">&#39;point_pct&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">point_pct</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+        <span class="s1">&#39;point_pct_avg&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">point_pct</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
         <span class="s1">&#39;actual_std&#39;</span><span class="p">:</span> <span class="n">actual_std</span><span class="p">,</span>
         <span class="s1">&#39;ideal_std&#39;</span><span class="p">:</span> <span class="n">ideal_std</span><span class="p">,</span>
         <span class="s1">&#39;ratio&#39;</span><span class="p">:</span> <span class="n">actual_std</span> <span class="o">/</span> <span class="n">ideal_std</span>
@@ -409,11 +414,13 @@
 </div>
 </div>
 </div>
+<p>For each iteration in the list comprehension, we extract the season label and then unpack the competitive balance dictionary result. The results for each season are stored as a pandas dataframe.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
     <span class="p">{</span>
         <span class="s1">&#39;season&#39;</span><span class="p">:</span> <span class="n">season</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;num_teams&#39;</span><span class="p">:</span> <span class="n">season</span><span class="p">[</span><span class="s1">&#39;num_teams&#39;</span><span class="p">],</span>
         <span class="o">**</span><span class="n">calculate_within_season_var</span><span class="p">(</span><span class="n">season</span><span class="p">[</span><span class="s1">&#39;standings_df&#39;</span><span class="p">])</span>
     <span class="p">}</span>
     <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">all_seasons</span>
@@ -422,6 +429,7 @@
 </div>
 </div>
 </div>
+<p>We can see the first few seasons had very little teams and games played.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -448,8 +456,9 @@
     <tr style="text-align: right;">
       <th></th>
       <th>season</th>
+      <th>num_teams</th>
       <th>gp</th>
-      <th>point_pct</th>
+      <th>point_pct_avg</th>
       <th>actual_std</th>
       <th>ideal_std</th>
       <th>ratio</th>
@@ -459,6 +468,7 @@
     <tr>
       <th>0</th>
       <td>19171918</td>
+      <td>4</td>
       <td>18.0</td>
       <td>0.5</td>
       <td>0.174078</td>
@@ -468,6 +478,7 @@
     <tr>
       <th>1</th>
       <td>19181919</td>
+      <td>3</td>
       <td>18.0</td>
       <td>0.5</td>
       <td>0.163551</td>
@@ -477,6 +488,7 @@
     <tr>
       <th>2</th>
       <td>19191920</td>
+      <td>4</td>
       <td>24.0</td>
       <td>0.5</td>
       <td>0.222439</td>
@@ -486,6 +498,7 @@
     <tr>
       <th>3</th>
       <td>19201921</td>
+      <td>4</td>
       <td>24.0</td>
       <td>0.5</td>
       <td>0.147314</td>
@@ -495,6 +508,7 @@
     <tr>
       <th>4</th>
       <td>19211922</td>
+      <td>4</td>
       <td>24.0</td>
       <td>0.5</td>
       <td>0.125865</td>
@@ -505,20 +519,119 @@
 </table>
 </div></div></div>
 </div>
+<p>The most recent seasons were cut short due to COVID-19 and had a higher average points percentage due to points for overtime losses.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>gp</th>
+      <th>point_pct_avg</th>
+      <th>actual_std</th>
+      <th>ideal_std</th>
+      <th>ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>98</th>
+      <td>20162017</td>
+      <td>82.000000</td>
+      <td>0.558740</td>
+      <td>0.090735</td>
+      <td>0.054833</td>
+      <td>1.654746</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>20172018</td>
+      <td>82.000000</td>
+      <td>0.558222</td>
+      <td>0.092602</td>
+      <td>0.054840</td>
+      <td>1.688573</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>20182019</td>
+      <td>82.000000</td>
+      <td>0.553304</td>
+      <td>0.081895</td>
+      <td>0.054901</td>
+      <td>1.491679</td>
+    </tr>
+    <tr>
+      <th>101</th>
+      <td>20192020</td>
+      <td>69.806452</td>
+      <td>0.557763</td>
+      <td>0.084668</td>
+      <td>0.059444</td>
+      <td>1.424336</td>
+    </tr>
+    <tr>
+      <th>102</th>
+      <td>20202021</td>
+      <td>56.000000</td>
+      <td>0.556164</td>
+      <td>0.115598</td>
+      <td>0.066392</td>
+      <td>1.741138</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</div>
+<div class="section" id="define-season-groupings">
+<h2>Define Season Groupings<a class="headerlink" href="#define-season-groupings" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ideas</span>
+<span class="c1"># original 6 era</span>
+<span class="c1"># expansion</span>
+<span class="c1"># dead puck era</span>
+<span class="c1"># OT</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="plot-ratio-over-time">
+<h2>Plot Ratio Over Time<a class="headerlink" href="#plot-ratio-over-time" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace with a plottly chart</span>
+<span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
 <span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/01-Competitive-Balance_12_0.png" src="_images/01-Competitive-Balance_12_0.png" />
+<img alt="_images/01-Competitive-Balance_19_0.png" src="_images/01-Competitive-Balance_19_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="define-season-groupings">
-<h2>Define Season Groupings<a class="headerlink" href="#define-season-groupings" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
