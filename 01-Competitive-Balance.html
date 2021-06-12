@@ -280,11 +280,25 @@
   <a class="reference internal nav-link" href="#exploration">
    Exploration
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#historical-competitive-balance">
+     Historical Competitive Balance
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#modeling">
    Modeling
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#permutation-test">
+     Permutation Test
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#id3">
@@ -335,9 +349,9 @@
 </div></blockquote>
 <div class="section" id="pre-and-post-periods">
 <h3>Pre and Post Periods<a class="headerlink" href="#pre-and-post-periods" title="Permalink to this headline">¶</a></h3>
-<p><strong>Expansion Eras: 1979 to 2004</strong></p>
+<p><strong>Expansion Eras: 1979-1980 to 2003-2004</strong></p>
 <p>Major highlights.</p>
-<p><strong>Post Lockout Era: 2005 to 2021</strong></p>
+<p><strong>Post Lockout Era: 2005-2006 to 2020-2021</strong></p>
 <p>Major rule changes.</p>
 </div>
 <div class="section" id="competitive-balance">
@@ -427,7 +441,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 104/104 [00:07&lt;00:00, 13.78it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 104/104 [00:06&lt;00:00, 16.24it/s]
 </pre></div>
 </div>
 </div>
@@ -510,6 +524,31 @@
     <span class="p">}</span>
     <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">all_seasons</span>
 <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 103 entries, 0 to 102
+Data columns (total 7 columns):
+ #   Column         Non-Null Count  Dtype  
+---  ------         --------------  -----  
+ 0   season         103 non-null    object 
+ 1   num_teams      103 non-null    int64  
+ 2   gp             103 non-null    float64
+ 3   point_pct_avg  103 non-null    float64
+ 4   actual_std     103 non-null    float64
+ 5   ideal_std      103 non-null    float64
+ 6   ratio          103 non-null    float64
+dtypes: float64(5), int64(1), object(1)
+memory usage: 5.8+ KB
 </pre></div>
 </div>
 </div>
@@ -699,32 +738,216 @@
 <h3>Analysis Periods<a class="headerlink" href="#analysis-periods" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ideas</span>
-<span class="c1"># NHL expansion: 1979 to 2004</span>
-<span class="c1"># Post 2005 Lockout: 2005 to 2021</span>
-<span class="c1"># permutation test for significant change in competitive balance</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">assign_period</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">season</span> <span class="o">&lt;</span> <span class="s1">&#39;19791980&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;other&#39;</span>
+    <span class="k">elif</span> <span class="n">season</span> <span class="o">&lt;</span> <span class="s1">&#39;20052006&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;expansion&#39;</span>   
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;post-lockout&#39;</span>
+    
+<span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">season</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">assign_period</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+</div>
+<p>Using our defined periods, we have 25 expansion era seasons and 16 post-lockout seasons.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;seasons&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">season</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+        <span class="s1">&#39;teams&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">num_teams</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="s1">&#39;point_pct_avg&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">point_pct_avg</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="s1">&#39;ratio&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">ratio</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+
+<span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;period&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>seasons</th>
+      <th>teams</th>
+      <th>point_pct_avg</th>
+      <th>ratio</th>
+    </tr>
+    <tr>
+      <th>period</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>expansion</th>
+      <td>25.0</td>
+      <td>24.120000</td>
+      <td>0.505425</td>
+      <td>1.856610</td>
+    </tr>
+    <tr>
+      <th>other</th>
+      <td>62.0</td>
+      <td>8.258065</td>
+      <td>0.500000</td>
+      <td>1.846821</td>
+    </tr>
+    <tr>
+      <th>post-lockout</th>
+      <td>16.0</td>
+      <td>30.250000</td>
+      <td>0.558143</td>
+      <td>1.535151</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 </div>
 </div>
 <div class="section" id="exploration">
 <h2>Exploration<a class="headerlink" href="#exploration" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>full time series with dashed lines for periods</p></li>
-<li><p>zoom in for just seasons of interest</p></li>
-</ul>
+<p>To facilitate plotting, we’ll extract the last 4 characters from the <code class="docutils literal notranslate"><span class="pre">season</span></code> variable to represent the year.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace with a plottly chart</span>
-<span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span>
-<span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">);</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">competitive_balance_df</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="historical-competitive-balance">
+<h3>Historical Competitive Balance<a class="headerlink" href="#historical-competitive-balance" title="Permalink to this headline">¶</a></h3>
+<p>First, we’ll take a look at how competitive balance has changed throughout the history of the leauge.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">plotnine</span> <span class="k">as</span> <span class="nn">p9</span>
+
+<span class="p">(</span>
+    <span class="n">p9</span><span class="o">.</span><span class="n">ggplot</span><span class="p">(</span><span class="n">competitive_balance_df</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">aes</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;ratio&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;period&#39;</span><span class="p">))</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">geom_point</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">geom_line</span><span class="p">()</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">2021</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">scale_color_manual</span><span class="p">(</span>
+        <span class="n">breaks</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;other&#39;</span><span class="p">,</span> <span class="s1">&#39;expansion&#39;</span><span class="p">,</span> <span class="s1">&#39;post-lockout&#39;</span><span class="p">],</span>
+        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;#999999&#39;</span><span class="p">,</span> <span class="s1">&#39;#FF9900&#39;</span><span class="p">,</span> <span class="s1">&#39;#333333&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Competitive Balance Ratio&#39;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Season&#39;</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Ratio&#39;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Period&#39;</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">guides</span><span class="p">(</span>
+        
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme_bw</span><span class="p">()</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/01-Competitive-Balance_19_0.png" src="_images/01-Competitive-Balance_19_0.png" />
+<img alt="_images/01-Competitive-Balance_25_0.png" src="_images/01-Competitive-Balance_25_0.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8772941740990)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s zoom in on the two periods of interest.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">analysis_df</span> <span class="o">=</span> <span class="n">competitive_balance_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;season &gt; &quot;19781989&quot;&#39;</span><span class="p">)</span>
+
+<span class="c1"># extract means</span>
+<span class="n">expansion</span> <span class="o">=</span> <span class="n">analysis_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;period == &quot;expansion&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="o">.</span><span class="n">values</span>
+<span class="n">post_lockout</span> <span class="o">=</span> <span class="n">analysis_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;period == &quot;post-lockout&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="o">.</span><span class="n">values</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Competitive Balance Ratio&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">25</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Expansion: </span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Post-Lockout: </span><span class="si">{</span><span class="n">post_lockout</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">post_lockout</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Competitive Balance Ratio
+-------------------------
+Expansion: 1.86 (0.30)
+Post-Lockout: 1.54 (0.19)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
+    <span class="n">p9</span><span class="o">.</span><span class="n">ggplot</span><span class="p">(</span><span class="n">analysis_df</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">aes</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;ratio&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;period&#39;</span><span class="p">))</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">geom_point</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">geom_line</span><span class="p">()</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">2021</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">scale_color_manual</span><span class="p">(</span>
+        <span class="n">breaks</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;expansion&#39;</span><span class="p">,</span> <span class="s1">&#39;post-lockout&#39;</span><span class="p">],</span>
+        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;#FF9900&#39;</span><span class="p">,</span> <span class="s1">&#39;#333333&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Competitive Balance Ratio&#39;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Season&#39;</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Ratio&#39;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;Period&#39;</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="mi">1991</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">expansion</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span>
+        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#FF9900&#39;</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="mi">2015</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="mf">1.9</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">post_lockout</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span>
+        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#333333&#39;</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme_bw</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/01-Competitive-Balance_28_0.png" src="_images/01-Competitive-Balance_28_0.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8772958618263)&gt;
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -742,6 +965,86 @@
 <li><p>Permute and caculate</p></li>
 <li><p>Analyze distribution</p></li>
 </ol>
+<div class="section" id="permutation-test">
+<h3>Permutation Test<a class="headerlink" href="#permutation-test" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">observed_difference</span> <span class="o">=</span> <span class="n">post_lockout</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">expansion</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Observed Difference: </span><span class="si">{</span><span class="n">observed_difference</span><span class="si">:</span><span class="s1">.2F</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Observed Difference: -0.32
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">permutation_test</span><span class="p">(</span><span class="n">samples_a</span><span class="p">,</span> <span class="n">samples_b</span><span class="p">,</span> <span class="n">n_iters</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="n">pooled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">samples_a</span><span class="p">,</span> <span class="n">samples_b</span><span class="p">)</span>
+    <span class="n">random_differences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_iters</span><span class="p">)</span>
+    <span class="n">N_b</span> <span class="o">=</span> <span class="n">samples_b</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iters</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">pooled</span><span class="p">)</span>
+        <span class="n">random_differences</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pooled</span><span class="p">[:</span><span class="n">N_b</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pooled</span><span class="p">[</span><span class="n">N_b</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">difference</span><span class="o">=</span><span class="n">random_differences</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+
+<span class="n">perm_test_df</span> <span class="o">=</span> <span class="n">permutation_test</span><span class="p">(</span><span class="n">expansion</span><span class="p">,</span> <span class="n">post_lockout</span><span class="p">)</span>
+
+<span class="p">(</span>
+    <span class="n">p9</span><span class="o">.</span><span class="n">ggplot</span><span class="p">(</span><span class="n">perm_test_df</span><span class="p">,</span> <span class="n">p9</span><span class="o">.</span><span class="n">aes</span><span class="p">(</span><span class="s1">&#39;difference&#39;</span><span class="p">))</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">geom_histogram</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;#CCCCCC&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">geom_vline</span><span class="p">(</span><span class="n">xintercept</span><span class="o">=</span><span class="n">observed_difference</span><span class="p">,</span> <span class="n">linetype</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+    <span class="o">+</span><span class="n">p9</span><span class="o">.</span><span class="n">labs</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Permuation Results&#39;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Difference in Means (Null Hypothesis)&#39;</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s1">&#39;# of Trials&#39;</span>
+    <span class="p">)</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">theme_bw</span><span class="p">()</span>
+    <span class="o">+</span> <span class="n">p9</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=-</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Observed Difference&#39;</span><span class="p">,</span>
+        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#333333&#39;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/01-Competitive-Balance_33_0.png" src="_images/01-Competitive-Balance_33_0.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8772958727162)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># two-sided test</span>
+<span class="n">p_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">perm_test_df</span><span class="o">.</span><span class="n">difference</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">observed_difference</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Under the null hypothesis, the probability of a difference as extreme or more is </span><span class="si">{</span><span class="n">p_val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Under the null hypothesis, the probability of a difference as extreme or more is 0.0006
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="id3">
 <h2>Results<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
@@ -758,16 +1061,16 @@
         },
         codeMirrorConfig: {
             theme: "abcdef",
-            mode: "nhlstatsapi"
+            mode: "sports-analytics"
         },
         kernelOptions: {
-            kernelName: "nhlstatsapi",
+            kernelName: "sports-analytics",
             path: "./."
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'nhlstatsapi'</script>
+    <script>kernelName = 'sports-analytics'</script>
 
               </div>
               
