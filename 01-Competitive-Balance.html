@@ -286,6 +286,11 @@
      Historical Competitive Balance
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#expansion-era-vs-post-lockout">
+     Expansion Era vs. Post-Lockout
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -875,6 +880,9 @@ memory usage: 5.8+ KB
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="expansion-era-vs-post-lockout">
+<h3>Expansion Era vs. Post-Lockout<a class="headerlink" href="#expansion-era-vs-post-lockout" title="Permalink to this headline">¶</a></h3>
 <p>Let’s zoom in on the two periods of interest.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -943,7 +951,7 @@ Post-Lockout: 1.54 (0.19)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/01-Competitive-Balance_28_0.png" src="_images/01-Competitive-Balance_28_0.png" />
+<img alt="_images/01-Competitive-Balance_29_0.png" src="_images/01-Competitive-Balance_29_0.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8772958618263)&gt;
 </pre></div>
 </div>
@@ -1024,7 +1032,7 @@ Post-Lockout: 1.54 (0.19)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/01-Competitive-Balance_33_0.png" src="_images/01-Competitive-Balance_33_0.png" />
+<img alt="_images/01-Competitive-Balance_34_0.png" src="_images/01-Competitive-Balance_34_0.png" />
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8772958727162)&gt;
 </pre></div>
 </div>
@@ -1034,6 +1042,7 @@ Post-Lockout: 1.54 (0.19)
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># two-sided test</span>
 <span class="n">p_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">perm_test_df</span><span class="o">.</span><span class="n">difference</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">observed_difference</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Under the null hypothesis, the probability of a difference as extreme or more is </span><span class="si">{</span><span class="n">p_val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
