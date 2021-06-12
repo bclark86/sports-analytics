@@ -211,33 +211,84 @@
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#goal">
-   Goal
+  <a class="reference internal nav-link" href="#tl-dr">
+   TL;DR
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#question">
+     Question
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#approach">
+     Approach
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#results">
+     Results
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   Question
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pre-and-post-periods">
+     Pre and Post Periods
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#competitive-balance">
+     Competitive Balance
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#statistical-significance">
+     Statistical Significance
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#data">
+   Data
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#nhl-api-call">
+     NHL API Call
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Competitive Balance
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#analysis-periods">
+     Analysis Periods
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exploration">
+   Exploration
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#questions-to-answer">
-   Questions to Answer
+  <a class="reference internal nav-link" href="#modeling">
+   Modeling
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#nhl-standings-data">
-   NHL Standings Data
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#calculating-competitive-balance">
-   Calculating Competitive Balance
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#define-season-groupings">
-   Define Season Groupings
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#plot-ratio-over-time">
-   Plot Ratio Over Time
+  <a class="reference internal nav-link" href="#id3">
+   Results
   </a>
  </li>
 </ul>
@@ -254,29 +305,63 @@
   <div class="section" id="competitive-balance-in-the-nhl">
 <h1>Competitive Balance in the NHL<a class="headerlink" href="#competitive-balance-in-the-nhl" title="Permalink to this headline">¶</a></h1>
 <p>WORK-IN-PROGRESS</p>
-<div class="section" id="goal">
-<h2>Goal<a class="headerlink" href="#goal" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="tl-dr">
+<h2>TL;DR<a class="headerlink" href="#tl-dr" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="question">
+<h3>Question<a class="headerlink" href="#question" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Did the 2004-2005 lockout, and subsequent changes, impact the competitive balance of the NHL for the better?</p>
+</div></blockquote>
+</div>
+<div class="section" id="approach">
+<h3>Approach<a class="headerlink" href="#approach" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Compare 1979-2004 seasons (expansion eras) to the 2006-2021 seasons (post lockout) using within-season variance as a proxy for competitive balance and a permuation test for significant difference.</p>
+</div></blockquote>
+</div>
+<div class="section" id="results">
+<h3>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Competitive balance significantly decreased from XX to YY (a relative improvement of Z%).</p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Question<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Our goal of this analysis is to understand if the 2004-2005 lockout, and subsequent changes to the CBA and league rules, impacted the competitive balance of the NHL. We will tackle an important highlights of the pre and post periods for our analysis, how we will define competitive balance quantitatively, and if the difference between eras is statistically significant.</p>
+<p>Ultimately, we want to answer the question:</p>
+<blockquote>
+<div><p>Did the 2004-2005 lockout, and subsequent changes, impact the competitive balance of the NHL for the better?</p>
+</div></blockquote>
+<div class="section" id="pre-and-post-periods">
+<h3>Pre and Post Periods<a class="headerlink" href="#pre-and-post-periods" title="Permalink to this headline">¶</a></h3>
+<p><strong>Expansion Eras: 1979 to 2004</strong></p>
+<p>Major highlights.</p>
+<p><strong>Post Lockout Era: 2005 to 2021</strong></p>
+<p>Major rule changes.</p>
+</div>
+<div class="section" id="competitive-balance">
+<h3>Competitive Balance<a class="headerlink" href="#competitive-balance" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Analyze how rule changes and/or lockouts have impacted competitive balance in the NHL</p></li>
+<li><p>Within-season variation</p></li>
+<li><p>HHI (will this fail with teams moving in and out?)</p></li>
 </ul>
 </div>
-<div class="section" id="questions-to-answer">
-<h2>Questions to Answer<a class="headerlink" href="#questions-to-answer" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>What is competitive balance? How can it be measured?</p></li>
-<li><p>What are key time periods in the NHL? Lockouts and/or major rule changes</p></li>
-<li><p>How has competitive balanced changed across the major time periods? Is there any statistical significance to the findings?</p></li>
-</ul>
+<div class="section" id="statistical-significance">
+<h3>Statistical Significance<a class="headerlink" href="#statistical-significance" title="Permalink to this headline">¶</a></h3>
+<p>Permuation test</p>
 </div>
-<div class="section" id="nhl-standings-data">
-<h2>NHL Standings Data<a class="headerlink" href="#nhl-standings-data" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p>We are querying the history of the NHL standings using a helper function that connects to the NHL stats API. There isn’t a ton of documentation, but this <a class="reference external" href="https://github.com/dword4/nhlapi">repo</a> is a great place to start for understanding what is available.</p>
 <p>First we use a function to query the games played (GP) and point percentage for each team in a single season , and then we iterate through each season in history using that function to collect all historical results.</p>
+<div class="section" id="nhl-api-call">
+<h3>NHL API Call<a class="headerlink" href="#nhl-api-call" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
@@ -323,7 +408,7 @@
     <span class="n">current_start</span> <span class="o">=</span> <span class="n">start_season_start</span>
     <span class="n">current_end</span> <span class="o">=</span> <span class="n">start_season_end</span>
     <span class="n">all_seasons</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_season_start</span><span class="p">,</span> <span class="n">end_season_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">start_season_start</span><span class="p">,</span> <span class="n">end_season_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
         <span class="n">season</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_start</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_end</span><span class="p">)</span>
         <span class="n">season_dict</span> <span class="o">=</span> <span class="n">fetch_season_summary</span><span class="p">(</span><span class="n">season</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">season_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -342,7 +427,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 104/104 [00:09&lt;00:00, 11.17it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 104/104 [00:07&lt;00:00, 13.78it/s]
 </pre></div>
 </div>
 </div>
@@ -381,8 +466,8 @@
 </div>
 </div>
 </div>
-<div class="section" id="calculating-competitive-balance">
-<h2>Calculating Competitive Balance<a class="headerlink" href="#calculating-competitive-balance" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Competitive Balance<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>There are two metrics we will use to analyze competitive balance:</p>
 <ol class="simple">
 <li><p>Within-season variation (regular season)</p></li>
@@ -390,22 +475,22 @@
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_within_season_var</span><span class="p">(</span><span class="n">standings_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">calculate_within_season_var</span><span class="p">(</span><span class="n">standings_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate competitive balance for the season. This assumes that the ideal</span>
 <span class="sd">    point percentage is the average point percentage for the season, which may</span>
 <span class="sd">    not be 0.5.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">actual_std</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="c1"># assumes perfect balance is every team at mean</span>
-    <span class="n">point_pct</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">standings_df</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># weighted average to account for differences in games played</span>
+    <span class="n">point_pct_avg</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">standings_df</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">gp</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">gp</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="n">ideal_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">point_pct</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">point_pct</span><span class="p">)))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gp</span><span class="p">)</span>
-    <span class="n">max_points</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    <span class="n">min_points</span> <span class="o">=</span> <span class="n">standings_df</span><span class="o">.</span><span class="n">points_pct</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">ideal_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">point_pct_avg</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">point_pct_avg</span><span class="p">)))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gp</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;gp&#39;</span><span class="p">:</span> <span class="n">gp</span><span class="p">,</span>
-        <span class="s1">&#39;point_pct_avg&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">point_pct</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+        <span class="s1">&#39;point_pct_avg&#39;</span><span class="p">:</span> <span class="n">point_pct_avg</span><span class="p">,</span>
         <span class="s1">&#39;actual_std&#39;</span><span class="p">:</span> <span class="n">actual_std</span><span class="p">,</span>
         <span class="s1">&#39;ideal_std&#39;</span><span class="p">:</span> <span class="n">ideal_std</span><span class="p">,</span>
         <span class="s1">&#39;ratio&#39;</span><span class="p">:</span> <span class="n">actual_std</span> <span class="o">/</span> <span class="n">ideal_std</span>
@@ -610,23 +695,26 @@
 </div></div></div>
 </div>
 </div>
-<div class="section" id="define-season-groupings">
-<h2>Define Season Groupings<a class="headerlink" href="#define-season-groupings" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="analysis-periods">
+<h3>Analysis Periods<a class="headerlink" href="#analysis-periods" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ideas</span>
-<span class="c1"># original 6 era</span>
-<span class="c1"># expansion</span>
-<span class="c1"># dead puck era</span>
-<span class="c1"># shooutout added</span>
-<span class="c1"># 3v3 + shootout added</span>
+<span class="c1"># NHL expansion: 1979 to 2004</span>
+<span class="c1"># Post 2005 Lockout: 2005 to 2021</span>
+<span class="c1"># permutation test for significant change in competitive balance</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="section" id="plot-ratio-over-time">
-<h2>Plot Ratio Over Time<a class="headerlink" href="#plot-ratio-over-time" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="exploration">
+<h2>Exploration<a class="headerlink" href="#exploration" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>full time series with dashed lines for periods</p></li>
+<li><p>zoom in for just seasons of interest</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace with a plottly chart</span>
@@ -639,6 +727,25 @@
 <img alt="_images/01-Competitive-Balance_19_0.png" src="_images/01-Competitive-Balance_19_0.png" />
 </div>
 </div>
+</div>
+<div class="section" id="modeling">
+<h2>Modeling<a class="headerlink" href="#modeling" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://matthew-brett.github.io/cfd2019/chapters/05/permutation_and_t_test">https://matthew-brett.github.io/cfd2019/chapters/05/permutation_and_t_test</a></p>
+<ul class="simple">
+<li><p>Permuatation test for within-season variance</p></li>
+<li><p>permuation test for HHI</p></li>
+</ul>
+<ol class="simple">
+<li><p>Function to calculate metric (HHI only)</p></li>
+<li><p>Observed difference</p></li>
+<li><p>Combine arrays</p></li>
+<li><p>Permute and caculate</p></li>
+<li><p>Analyze distribution</p></li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h2>Results<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Summarize the findings</p>
 </div>
 </div>
 
